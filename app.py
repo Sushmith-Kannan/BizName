@@ -14,11 +14,9 @@ HUGGING_FACE_API_KEY = "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"
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGING_FACE_API_KEY
 
 # Load the tokenizer and model
-# Load the tokenizer and model
-model_name = "facebook/opt-350m"  # Switch to a lighter model
+model_name = "facebook/opt-125m"  # Lighter model
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=HUGGING_FACE_API_KEY)
 model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=HUGGING_FACE_API_KEY)
-
 
 ocr_model = PaddleOCR(lang='en')
 
