@@ -1,11 +1,12 @@
 import streamlit as st
+import requests
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import os
 import tempfile
 from PIL import Image
-import pytesseract
 import io
+import cv2
 
 # Set your Hugging Face API token
 HUGGING_FACE_API_KEY = "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"
@@ -38,6 +39,22 @@ def extract_names_with_huggingface(text):
 
     return person_name, organization_name
 
+def perform_ocr(image):
+    """Perform OCR using OCR.space API."""
+    api_key = "YOUR_OCR_SPACE_API_KEY"  # Replace with your OCR.space API key
+    url = "https://api.ocr.space/parse/image"
+    
+    _, img_encoded = cv2.imencode('.png', image)
+    img_bytes = img_encoded.tobytes()
+    
+    response = requests.post(url, files={"image": img_bytes}, data={"apikey": api_key})
+    result = response.json()
+    
+    if result["OCRExitCode"] == 1:
+        return result["ParsedResults"][0]["ParsedText"]
+    else:
+        return "Error performing OCR."
+
 st.title("OCR and Text Extraction App")
 
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
@@ -46,8 +63,8 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption='Uploaded Image', use_column_width=True)
 
-    # Perform OCR on the image using Tesseract
-    ocr_text = pytesseract.image_to_string(image)
+    # Perform OCR on the image using OCR.space API
+    ocr_text = perform_ocr(image)
 
     st.subheader("Extracted Text:")
     st.text(ocr_text)

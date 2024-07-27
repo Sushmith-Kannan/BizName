@@ -4,3 +4,4 @@ transformers
 torch
 Pillow
 opencv-python-headless
+requests
