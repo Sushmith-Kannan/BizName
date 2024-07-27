@@ -4,7 +4,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import os
 import tempfile
-from PIL import Image, ImageOps
+from PIL import Image
 import io
 
 # Set your Hugging Face API token
@@ -14,7 +14,7 @@ HUGGING_FACE_API_KEY = "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"
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGING_FACE_API_KEY
 
 # Load the tokenizer and model
-model_name = "facebook/opt-1.3b"  # Example model; adjust based on your needs
+model_name = "facebook/opt-125m"  # Using a smaller model for efficiency
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=HUGGING_FACE_API_KEY)
 model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=HUGGING_FACE_API_KEY)
 
@@ -46,10 +46,6 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    image = ImageOps.exif_transpose(image)  # Correct orientation
-    max_size = (800, 800)  # Resize to fit within this size
-    image.thumbnail(max_size, Image.ANTIALIAS)  # Maintain aspect ratio
-
     img_bytes = io.BytesIO()
     image.save(img_bytes, format='JPEG')
     img_bytes.seek(0)
