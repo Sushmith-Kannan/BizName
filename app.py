@@ -4,7 +4,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import os
 import tempfile
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 
 # Set your Hugging Face API token
@@ -46,6 +46,10 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
+    image = ImageOps.exif_transpose(image)  # Correct orientation
+    max_size = (800, 800)  # Resize to fit within this size
+    image.thumbnail(max_size, Image.ANTIALIAS)  # Maintain aspect ratio
+
     img_bytes = io.BytesIO()
     image.save(img_bytes, format='JPEG')
     img_bytes.seek(0)
