@@ -1,0 +1,5 @@
+streamlit
+paddleocr
+transformers
+torch
+Pillow
