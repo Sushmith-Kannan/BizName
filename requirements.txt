@@ -1,7 +1,6 @@
 streamlit
-paddleocr
+pytesseract
 transformers
 torch
 Pillow
-paddlepaddle
 opencv-python-headless

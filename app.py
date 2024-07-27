@@ -1,10 +1,10 @@
 import streamlit as st
-from paddleocr import PaddleOCR
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import os
 import tempfile
 from PIL import Image
+import pytesseract
 import io
 
 # Set your Hugging Face API token
@@ -17,8 +17,6 @@ os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGING_FACE_API_KEY
 model_name = "facebook/opt-125m"  # Using a smaller model for efficiency
 tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=HUGGING_FACE_API_KEY)
 model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=HUGGING_FACE_API_KEY)
-
-ocr_model = PaddleOCR(lang='en')
 
 def extract_names_with_huggingface(text):
     """Extracts person and organization names using a Hugging Face model."""
@@ -46,24 +44,11 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    img_bytes = io.BytesIO()
-    image.save(img_bytes, format='JPEG')
-    img_bytes.seek(0)
-    img_path = tempfile.mktemp(suffix=".jpeg")
-
-    with open(img_path, "wb") as f:
-        f.write(img_bytes.read())
-
     st.image(image, caption='Uploaded Image', use_column_width=True)
-    
-    # Perform OCR on the image
-    result = ocr_model.ocr(img_path)
-    
-    # Extract text from OCR result
-    ocr_text = ""
-    for line in result:
-        ocr_text += ' '.join([word_info[1][0] for word_info in line]) + '\n'
-    
+
+    # Perform OCR on the image using Tesseract
+    ocr_text = pytesseract.image_to_string(image)
+
     st.subheader("Extracted Text:")
     st.text(ocr_text)
 
@@ -73,6 +58,3 @@ if uploaded_file is not None:
     st.subheader("Extracted Information:")
     st.write(f"Person Name: {person}")
     st.write(f"Organization Name: {organization}")
-
-    # Clean up temporary files
-    os.remove(img_path)
