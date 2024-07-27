@@ -3,3 +3,4 @@ paddleocr
 transformers
 torch
 Pillow
+paddlepaddle
