@@ -1,4 +1,4 @@
-# config.toml
-
 [server]
-maxUploadSize = 200
+headless = true
+port = $PORT
+enableCORS = false
