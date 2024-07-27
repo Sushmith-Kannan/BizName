@@ -4,3 +4,4 @@ transformers
 torch
 Pillow
 paddlepaddle
+opencv-python-headless
